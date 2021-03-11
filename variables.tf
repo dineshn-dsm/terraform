@@ -39,3 +39,8 @@ variable "alb_listener_path" {
   type    = string
   default = "/"
 }
+
+variable "s3_bucket_name" {
+  type = string
+  default = "pidile-terraform-test-2"
+}

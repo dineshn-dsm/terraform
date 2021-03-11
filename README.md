@@ -1,6 +1,6 @@
 # AWS EC2 Instance Terraform module
 
-Terraform  which creates EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) on AWS.
+Terraform  which creates EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) & S3 bucket with public read access to S3 dns on AWS.
 
 These types of resources are supported:
 
@@ -61,7 +61,7 @@ variable "alb_listener_path" {
 
 ## security group update
 
-Currently SSH & HTTP is allowed to `any where`, update required ip in  `cidr_blocks` ingress 
+Currently SSH & HTTP is allowed to `any where`, update required ip in  `cidr_blocks` ingress in `sg.tf` file
 
 ```hcl
  ingress {
@@ -93,11 +93,7 @@ Currently SSH & HTTP is allowed to `any where`, update required ip in  `cidr_blo
 | terraform | >= 0.12.6 |
 | aws | >= 2.65 |
 
-## Providers
 
-| Name | Version |
-|------|---------|
-| aws | >= 2.65 |
 
 ## Modules
 
@@ -118,12 +114,15 @@ No Modules.
 | aws_region | aws region to deploy | `string` | ap-south-1 | no |
 | key_pair_name | Kay pair to bind | `string` | n/a | yes |
 | no_of_instance | Desired no of instance, minimum 2 | `number` | `2` | no |
+| s3_bucket_name | Name of bucket to host static website | `Unique name` | n/a | yes |
+
 
 
 ## Outputs
 
-1. sInstance public ips
+1. Instance public ips
 2. ALB DNS
+3. S3 Bucket website DNS
 
 ## Authors
 
