@@ -1,10 +1,13 @@
-# AWS EC2 Instance Terraform module
+# Launch AWS services using Terraform 
 
 Terraform  which creates New VPC having all public subnet and deploy EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) & S3 bucket with public read access to S3 dns on AWS.
 
 These types of resources are supported:
 
+* [VPC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc)
+* [Subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet)
 * [EC2 instance](https://www.terraform.io/docs/providers/aws/r/instance.html)
+* [Load Balancer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb)
 
 ## Terraform versions
 
@@ -99,8 +102,6 @@ Currently SSH & HTTP is allowed to `any where`, update required ip in  `cidr_blo
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6 |
-| aws | >= 2.65 |
-
 
 
 ## Modules
@@ -117,15 +118,14 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| aws_region | aws region to deploy | `string` | ap-south-1 | no |
+| vpc_cidr_block | VPC CIDR block range | n/a | 10.2.0.0/16 | yes |
+| subnet_cidrs_public | Public subnet CIDR block range | `list` | "10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24" | yes |
 | ami_data_filter | Name AMI to use in data source filter | `string` | amazon 2 ami | yes |
 | instance_type | Instance type | `string` | t2.micro | yes |
-| aws_region | aws region to deploy | `string` | ap-south-1 | no |
 | key_pair_name | Kay pair to bind | `string` | n/a | yes |
 | no_of_instance | Desired no of instance, minimum 2 | `number` | `2` | no |
 | s3_bucket_name | Name of bucket to host static website | `Unique name` | n/a | yes |
-| vpc_cidr_block | VPC CIDR block range | n/a | 10.2.0.0/16 | yes |
-| subnet_cidrs_public | Public subnet CIDR block range | `list` | "10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24" | yes |
-
 
 
 ## Outputs
@@ -134,7 +134,7 @@ No Modules.
 2. ALB DNS
 3. S3 Bucket website DNS
 
-## Authors
+## Author
 
 Module managed by [Dinesh N](https://github.com/dineshn-dsm).
 
