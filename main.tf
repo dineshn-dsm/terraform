@@ -18,7 +18,7 @@ module "ec2" {
   key_name                = var.key_pair_name
   instance_count          = var.no_of_instance
   ec2_security_groups     = ["${aws_security_group.allow_http.id}"]
-  subnet_id               = data.aws_subnet_ids.default.ids
+  subnet_id               = "${module.vpc.mop_subnet_id}"  #data.aws_subnet_ids.default.ids
 }
 
 module "elb" {
@@ -27,10 +27,10 @@ module "elb" {
   alb_listener_port       = var.alb_listener_port
   alb_listener_protocol   = var.alb_listener_protocol
   alb_listener_path       = var.alb_listener_path
-  vpc_id                  = data.aws_vpc.default.id 
+  vpc_id                  = "${module.vpc.mop_vpc_id}"  #data.aws_vpc.default.id 
   lb_security_groups      = ["${aws_security_group.allow_http.id}"]
   instance_id             = "${module.ec2.mpo_ec2_id}"  
-  subnet_id               = data.aws_subnet_ids.default.ids
+  subnet_id               = "${module.vpc.mop_subnet_id}" #data.aws_subnet_ids.default.ids
 }
 
 module "s3" {
@@ -38,3 +38,12 @@ module "s3" {
   s3_tags                 = "s3-module" 
   s3_bucket_name          = var.s3_bucket_name
 }
+
+module "vpc" {
+  source                  = "./module/vpc"
+  aws_region              = var.aws_region
+  vpc_cidr_block          = "10.2.0.0/16"
+  subnet_cidrs_public     = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
+  vpc_tags                = "vpc-module" 
+}
+

@@ -1,6 +1,6 @@
 # AWS EC2 Instance Terraform module
 
-Terraform  which creates EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) & S3 bucket with public read access to S3 dns on AWS.
+Terraform  which creates New VPC having all public subnet and deploy EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) & S3 bucket with public read access to S3 dns on AWS.
 
 These types of resources are supported:
 
@@ -56,6 +56,14 @@ variable "alb_listener_path" {
   type    = string
   default = "/"
 }
+```
+
+udpate below details in `main.tf` eg: VPC CIDR ip range & subnet ip range
+
+```hcl
+  vpc_cidr_block          = "10.2.0.0/16"
+  subnet_cidrs_public     = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
+
 ```
 
 
@@ -115,6 +123,8 @@ No Modules.
 | key_pair_name | Kay pair to bind | `string` | n/a | yes |
 | no_of_instance | Desired no of instance, minimum 2 | `number` | `2` | no |
 | s3_bucket_name | Name of bucket to host static website | `Unique name` | n/a | yes |
+| vpc_cidr_block | VPC CIDR block range | n/a | 10.2.0.0/16 | yes |
+| subnet_cidrs_public | Public subnet CIDR block range | `list` | "10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24" | yes |
 
 
 
