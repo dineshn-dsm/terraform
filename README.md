@@ -1,6 +1,10 @@
 # Launch AWS services using Terraform 
 
-Terraform  which creates New VPC having all public subnet and deploy EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) & S3 bucket with public read access to S3 dns on AWS.
+Terraform which creates below services on AWS
+* New VPC with public subnet
+* Deploy EC2 instance(s) with Nginx and Application Load balancer(public facing in HTTP) on new VPC
+* S3 bucket with public read access to S3 dns
+* Auto scalling group using Launch template which deploys Apache on EC2 instance and expose in ALB.
 
 These types of resources are supported:
 
@@ -8,12 +12,21 @@ These types of resources are supported:
 * [Subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet)
 * [EC2 instance](https://www.terraform.io/docs/providers/aws/r/instance.html)
 * [Load Balancer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb)
+* [Auto scaling](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group)
 
 ## Terraform versions
 
 Terraform v0.14.5
 
 ## Usage
+
+Install terraform --> clone this repo --> update  required input values --> Run below commands
+
+terraform init
+terraform plan
+terraform apply --auto-approve
+
+## Changes required
 
 udpate below details in `variables.tf` eg: key_pari_name, no_of_instance, region, ami data filter
 
@@ -33,40 +46,46 @@ variable "ami_data_filter" {
   type = list
   default = ["amzn2-ami-hvm-2.0.20201218.1-x86_64-gp2"]
 }
-
-variable "key_pair_name" {
-  type    = string
-  default = "<Key_name>"
-}
-
-variable "no_of_instance" {
-  description = "Desired no of instance, minimum 2"
-  type    = number
-  default = "2"
-}
-
-variable "alb_listener_port" {
-  type    = number
-  default = "80"
-}
-
-variable "alb_listener_protocol" {
-  type    = string
-  default = "HTTP"
-}
-
-variable "alb_listener_path" {
-  type    = string
-  default = "/"
-}
 ```
 
-udpate below details in `main.tf` eg: VPC CIDR ip range & subnet ip range
+udpate VPC below details in `main.tf` eg: VPC CIDR ip range & subnet ip range
 
 ```hcl
   vpc_cidr_block          = "10.2.0.0/16"
   subnet_cidrs_public     = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
 
+```
+
+udpate EC2 below details in `main.tf` eg: key_piar_name, instance count
+
+```hcl
+  key_name                = <key-pair-name>
+  instance_count          = "2"
+
+```
+
+udpate elb below details in `main.tf` eg: alb listener port, protocol, peath
+
+```hcl
+  alb_listener_port       = "80"
+  alb_listener_protocol   = "HTTP"
+  alb_listener_path       = "/"
+  
+```
+
+udpate asg below details in `main.tf` eg: key_piar name, instance max/min/desired count, etc
+
+```hcl
+  key_name                = <key-pair-name>
+  shutdown_behaviour      = "terminate" # stop or terminate
+  desired_capacity        = 1
+  max_size                = 2
+  min_size                = 1
+  target_cpu_percent      = 50  #percentage
+  asg_listener_port       = 80
+  asg_listener_protocol   = "HTTP"
+  asg_listener_path       = "/"
+  
 ```
 
 
@@ -95,6 +114,8 @@ Currently SSH & HTTP is allowed to `any where`, update required ip in  `cidr_blo
 
 ## Notes
 
+This Terraform scripts create all resources mentioned above. Please comment module which dont need to be executed.
+
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -106,7 +127,7 @@ Currently SSH & HTTP is allowed to `any where`, update required ip in  `cidr_blo
 
 ## Modules
 
-No Modules.
+No external Modules.
 
 ## Resources
 
@@ -125,7 +146,12 @@ No Modules.
 | instance_type | Instance type | `string` | t2.micro | yes |
 | key_pair_name | Kay pair to bind | `string` | n/a | yes |
 | no_of_instance | Desired no of instance, minimum 2 | `number` | `2` | no |
-| s3_bucket_name | Name of bucket to host static website | `Unique name` | n/a | yes |
+| s3_bucket_name | Unique Name of bucket to host static website | `Unique name` | `n/a | yes |
+| desired_capacity | Auto scalling group desired instance count | `number` | 1 | No |
+| max_size |  Auto scalling group maximum instance count | `number` | 2 | No |
+| min_size |  Auto scalling group minimum instance count | `number` | 1 | No |
+| target_cpu_percent | Auto scale policy cpu percentage| `number in %` | 50 | yes |
+| user_data_base64 | The Base64-encoded user data to provide when launching the instance. | `Base64-encoded` | httpd | yes |
 
 
 ## Outputs
