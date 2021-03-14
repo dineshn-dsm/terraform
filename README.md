@@ -6,6 +6,9 @@ Terraform which creates below services on AWS
 * S3 bucket with public read access to S3 dns
 * Auto scalling group using Launch template which deploys Apache on EC2 instance and expose in ALB.
 
+## Resources
+
+
 These types of resources are supported:
 
 * [VPC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc)
@@ -25,6 +28,7 @@ Install terraform --> clone this repo --> update  required input values --> Run 
 terraform init
 terraform plan
 terraform apply --auto-approve
+
 
 ## Changes required
 
@@ -129,12 +133,6 @@ This Terraform scripts create all resources mentioned above. Please comment modu
 
 No external Modules.
 
-## Resources
-
-| Name |
-|------|
-| [aws_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) |
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -159,6 +157,10 @@ No external Modules.
 1. Instance public ips
 2. ALB DNS
 3. S3 Bucket website DNS
+
+## Revert changes
+
+terraform destroy --auto-approve
 
 ## Author
 
